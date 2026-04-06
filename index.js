@@ -1,4 +1,5 @@
 import express from 'express';
+import fs from 'fs';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -11,6 +12,13 @@ const db = await open({
   filename: 'chat.db',
   driver: sqlite3.Database
 });
+
+try {
+  fs.truncateSync('./chat.db', 0); 
+  console.log('chat.db emptied successfully');
+} catch (err) {
+  console.error('Error emptying db:', err);
+}
 
 // create our 'messages' table (you can ignore the 'client_offset' column for now)
 await db.exec(`
